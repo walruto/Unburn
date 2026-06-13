@@ -212,6 +212,11 @@ export default function Calendar() {
     setVisibleMonth(getMonthRange(nextToday).start);
   };
 
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    setVisibleMonth(getMonthRange(date).start);
+  };
+
   const getTileClassName = ({ date, view }) => {
     if (view !== 'month') return null;
 
@@ -304,7 +309,7 @@ export default function Calendar() {
                 next2Label={null}
                 nextLabel={null}
                 onActiveStartDateChange={handleMonthChange}
-                onClickDay={setSelectedDate}
+                onClickDay={handleDateSelect}
                 prev2Label={null}
                 prevLabel={null}
                 showNavigation={false}
