@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Unburn - Personal Recovery Sanctuary</title>
+    <!-- Tailwind CSS with Plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#2e56c5",
+                    "primary-fixed": "#ffdf9a",
+                    "on-primary-container": "#6c5100",
+                    "on-secondary": "#ffffff",
+                    "outline": "#807662",
+                    "on-surface": "#1f1b13",
+                    "on-secondary-container": "#743900",
+                    "secondary-fixed": "#ffdcc5",
+                    "on-secondary-fixed-variant": "#713700",
+                    "surface-container-high": "#f1e7d9",
+                    "secondary-fixed-dim": "#ffb783",
+                    "tertiary-container": "#bcc9ff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#ebe1d3",
+                    "secondary": "#924c0b",
+                    "error": "#ba1a1a",
+                    "on-background": "#1f1b13",
+                    "surface-dim": "#e2d9cb",
+                    "on-tertiary-fixed-variant": "#043cad",
+                    "tertiary-fixed-dim": "#b5c4ff",
+                    "on-tertiary-container": "#224cbc",
+                    "surface-variant": "#ebe1d3",
+                    "primary": "#775a00",
+                    "primary-container": "#f6c445",
+                    "on-surface-variant": "#4e4635",
+                    "on-primary": "#ffffff",
+                    "primary-fixed-dim": "#f1c041",
+                    "background": "#fff8f2",
+                    "inverse-primary": "#f1c041",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#d2c5ae",
+                    "inverse-surface": "#353026",
+                    "surface": "#fff8f2",
+                    "inverse-on-surface": "#f9efe1",
+                    "secondary-container": "#fea35e",
+                    "surface-container": "#f6edde",
+                    "on-tertiary-fixed": "#00164e",
+                    "surface-container-low": "#fcf2e4",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#301400",
+                    "on-primary-fixed": "#251a00",
+                    "surface-tint": "#775a00",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#fff8f2",
+                    "tertiary-fixed": "#dce1ff",
+                    "on-primary-fixed-variant": "#5a4300",
+                    "workload-low": "#e6f4ea",
+                    "workload-mod": "#fff3cd",
+                    "workload-busy": "#ffe5b4",
+                    "workload-high": "#f8d7da"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "0.5rem",
+                    "xl": "5rem",
+                    "unit": "8px",
+                    "md": "2rem",
+                    "lg": "3rem",
+                    "container-margin": "24px",
+                    "gutter": "20px",
+                    "sm": "1rem"
+            },
+            "fontFamily": {
+                    "sans": ["Plus Jakarta Sans", "sans-serif"],
+                    "display-hero-mobile": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "label-caps": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "display-hero": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"]
+            }
+          }
+        },
+      }
+    </script>
+
+    <style>
+        body {
+            background-color: #fff8f2;
+            color: #1f1b13;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100dvh;
+        }
+        
+        .squishy-btn, .squish-btn, .squish-click, .squishy-interaction, .squishy-press {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, box-shadow 0.2s ease;
+        }
+        .squishy-btn:active, .squish-btn:active, .squish-click:active, .squishy-interaction:active, .squishy-press:active {
+            transform: scale(0.95);
+        }
+
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #775a00;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #f6c445;
+        }
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            border-color: white;
+        }
+        .toggle-label {
+            width: 3rem;
+            height: 1.5rem;
+            background-color: #ebe1d3;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 1.25rem;
+            height: 1.25rem;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 28px; width: 28px; border-radius: 50%; background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; margin-top: -8px; border: 2px solid #ebe1d3;
+        }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 12px; cursor: pointer; border-radius: 9999px; }
+        .energy-track::-webkit-slider-runnable-track { background: linear-gradient(to right, #bcc9ff, #f6c445); }
+        .stress-track::-webkit-slider-runnable-track { background: linear-gradient(to right, #e2d9cb, #fea35e); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="selection:bg-primary-container selection:text-on-primary-container">
+    <div id="root"></div>
+
+    <!-- React and Dependencies -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Mock Data & Components ---
+
+        const BottomNav = ({ active }) => {
+            const navigate = useNavigate();
+            return (
+                <nav className="fixed bottom-0 w-full rounded-t-xl z-50 bg-surface shadow-[0_-10px_30px_rgba(243,154,86,0.08)] md:hidden">
+                    <div className="flex justify-around items-center px-4 pb-4 pt-2">
+                        <button onClick={() => navigate('/home')} className={`flex flex-col items-center justify-center px-sm py-xs squish-btn ${active === 'home' ? 'bg-primary-container text-on-primary-container rounded-xl' : 'text-on-surface-variant'}`}>
+                            <span className="material-symbols-outlined mb-1" style={{fontVariationSettings: active === 'home' ? "'FILL' 1" : "'FILL' 0"}}>home</span>
+                            <span className="font-label-caps text-[10px] uppercase">Home</span>
+                        </button>
+                        <button onClick={() => navigate('/insights')} className={`flex flex-col items-center justify-center px-sm py-xs squish-btn ${active === 'explore' ? 'bg-primary-container text-on-primary-container rounded-xl' : 'text-on-surface-variant'}`}>
+                            <span className="material-symbols-outlined mb-1" style={{fontVariationSettings: active === 'explore' ? "'FILL' 1" : "'FILL' 0"}}>search</span>
+                            <span className="font-label-caps text-[10px] uppercase">Explore</span>
+                        </button>
+                        <button onClick={() => navigate('/trends')} className={`flex flex-col items-center justify-center px-sm py-xs squish-btn ${active === 'journey' ? 'bg-primary-container text-on-primary-container rounded-xl' : 'text-on-surface-variant'}`}>
+                            <span className="material-symbols-outlined mb-1" style={{fontVariationSettings: active === 'journey' ? "'FILL' 1" : "'FILL' 0"}}>auto_graph</span>
+                            <span className="font-label-caps text-[10px] uppercase">Journey</span>
+                        </button>
+                        <button onClick={() => navigate('/profile')} className={`flex flex-col items-center justify-center px-sm py-xs squish-btn ${active === 'profile' ? 'bg-primary-container text-on-primary-container rounded-xl' : 'text-on-surface-variant'}`}>
+                            <span className="material-symbols-outlined mb-1" style={{fontVariationSettings: active === 'profile' ? "'FILL' 1" : "'FILL' 0"}}>person</span>
+                            <span className="font-label-caps text-[10px] uppercase">Profile</span>
+                        </button>
+                    </div>
+                </nav>
+            );
+        };
+
+        const DesktopSidebar = ({ active }) => {
+            const navigate = useNavigate();
+            return (
+                <div className="hidden md:flex fixed left-0 top-0 h-full w-[80px] flex-col items-center py-md bg-surface border-r border-surface-container-low z-30 pt-24 gap-lg">
+                    <button onClick={() => navigate('/home')} className={`w-12 h-12 flex items-center justify-center rounded-xl transition-colors squish-btn ${active === 'home' ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high'}`}>
+                        <span className="material-symbols-outlined" style={{fontVariationSettings: active === 'home' ? "'FILL' 1" : "'FILL' 0"}}>home</span>
+                    </button>
+                    <button onClick={() => navigate('/insights')} className={`w-12 h-12 flex items-center justify-center rounded-xl transition-colors squish-btn ${active === 'explore' ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high'}`}>
+                        <span className="material-symbols-outlined" style={{fontVariationSettings: active === 'explore' ? "'FILL' 1" : "'FILL' 0"}}>search</span>
+                    </button>
+                    <button onClick={() => navigate('/trends')} className={`w-12 h-12 flex items-center justify-center rounded-xl transition-colors squish-btn ${active === 'journey' ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high'}`}>
+                        <span className="material-symbols-outlined" style={{fontVariationSettings: active === 'journey' ? "'FILL' 1" : "'FILL' 0"}}>auto_graph</span>
+                    </button>
+                    <button onClick={() => navigate('/profile')} className={`w-12 h-12 flex items-center justify-center rounded-xl transition-colors squish-btn ${active === 'profile' ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant hover:bg-surface-container-high'}`}>
+                        <span className="material-symbols-outlined" style={{fontVariationSettings: active === 'profile' ? "'FILL' 1" : "'FILL' 0"}}>person</span>
+                    </button>
+                </div>
+            );
+        };
+
+        const Header = () => (
+            <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md">
+                <div className="flex justify-between items-center w-full px-container-margin py-xs max-w-7xl mx-auto">
+                    <div className="flex items-center gap-xs cursor-pointer group">
+                        <img alt="User Avatar" className="w-10 h-10 rounded-full border-2 border-surface-container-high group-hover:border-primary-container transition-colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZUhJG_X7CRWV3srhigYJsqaxLCzERtqlo9sFA4BJACu0r_I86h4Y8QwFUIwM5TMhKHJwMTyru_pD-1fYBxQZXg0-7p9OOTzanSQuUv9EbXp7mt-uVjjo_eP1-P0niBDYrYaeav3cjWj7ujQ6LZ-Hf67Xrl-E5UehFmhiD3dZPay__ty1-sffPYblr86XxWC2hVNZQ5zw89ryQAWjBGSLmV3ttc1OQdMf5bdJLuLCzIJMoN0GkqiXwCx2m3DEEhSs0HGcRfHnkgtE"/>
+                    </div>
+                    <h1 className="font-headline-md text-headline-md font-bold text-primary tracking-tight">Unburn</h1>
+                    <button className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors squish-btn">
+                        <span className="material-symbols-outlined text-2xl">notifications</span>
+                    </button>
+                </div>
+            </header>
+        );
+
+        // --- Screens ---
+
+        const OnboardingScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background min-h-screen text-on-surface font-body-md antialiased overflow-x-hidden flex flex-col items-center justify-center relative">
+                    <main className="w-full max-w-[1040px] px-container-margin py-xl flex flex-col md:flex-row items-center justify-between gap-lg mx-auto min-h-screen relative z-10">
+                        <div className="w-full md:w-1/2 flex items-center justify-center mb-md md:mb-0 relative">
+                            <div className="relative w-full max-w-[400px] aspect-square rounded-full overflow-hidden shadow-[0_10px_30px_rgba(243,154,86,0.08)] bg-surface-container-lowest border border-surface-variant flex items-center justify-center p-md">
+                                <img alt="Meditation" className="w-full h-full object-cover rounded-full mix-blend-multiply opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCG-ojLORp_WM1tTjKfslLXG15QwCSMZqBN3x9wRxxN6B0MsqQF2iV6YMZ86dysG6YW9oPoha37qQSqnxelVmO71T45_A_03RLHaxxWFbA-FFZ7CRvSJ8vJdyFy6O-XAg5MUoWS7NVwn3QjzZmVk7hqXZiOd6Tq_gQryw30Wg29ReCKmk_MgOnDTuYzJXCJwm_71O2KFGkNaKT8hqjnSBrJXtUQw7VGB_nM2oBM-Y_gUfvJc_MKcgZhvB97sF-g3abI9yhG_Xwo9uM"/>
+                            </div>
+                        </div>
+                        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
+                            <div className="flex items-center gap-2 mb-lg text-primary">
+                                <span className="material-symbols-outlined text-3xl" style={{fontVariationSettings: "'FILL' 1"}}>spa</span>
+                                <span className="font-headline-md text-headline-md tracking-tight">Unburn</span>
+                            </div>
+                            <h1 className="text-4xl md:text-6xl font-bold text-on-surface mb-sm tracking-tight">Find your balance.</h1>
+                            <p className="font-body-lg text-body-lg text-on-surface-variant max-w-[480px] mb-lg">
+                                Unburn helps you listen to your body and prevent burnout before it happens. Your data stays private and secure.
+                            </p>
+                            <button onClick={() => navigate('/signup')} className="w-full sm:w-auto min-h-[56px] px-8 rounded-full bg-secondary-container text-on-secondary-container font-headline-md text-[18px] squishy-btn flex items-center justify-center gap-2">
+                                Get Started
+                                <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                            </button>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const SignUpScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background text-on-background min-h-screen flex flex-col items-center justify-center p-container-margin">
+                    <main className="w-full max-w-[480px] flex flex-col gap-xl">
+                        <header className="text-center space-y-sm">
+                            <h2 className="font-headline-md text-headline-md text-primary tracking-tight">Unburn</h2>
+                            <h1 className="text-3xl md:text-4xl font-bold text-on-surface">Sign Up</h1>
+                        </header>
+                        <section className="bg-surface-container-lowest border border-surface-variant rounded-lg p-container-margin md:p-lg soft-shadow flex flex-col gap-md">
+                            <div className="flex flex-col gap-sm">
+                                <button onClick={() => navigate('/permissions')} className="w-full min-h-[56px] flex items-center justify-center gap-sm border-2 border-surface-variant rounded-full text-on-surface font-body-md hover:bg-surface squishy-interaction">
+                                    Continue with Google
+                                </button>
+                                <button onClick={() => navigate('/permissions')} className="w-full min-h-[56px] flex items-center justify-center gap-sm border-2 border-surface-variant rounded-full text-on-surface font-body-md hover:bg-surface squishy-interaction">
+                                    <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>apps</span>
+                                    Continue with Apple
+                                </button>
+                            </div>
+                        </section>
+                    </main>
+                </div>
+            );
+        };
+
+        const PermissionsScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <main className="flex-grow w-full max-w-3xl mx-auto px-container-margin py-md flex flex-col gap-xl">
+                    <section className="text-center space-y-4 pt-8 md:pt-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-on-surface">Let's set up your sanctuary</h2>
+                        <p className="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto">
+                            Unburn works best when it understands your natural rhythm. We only ask for what helps us support your recovery.
+                        </p>
+                    </section>
+                    <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {['Calendar', 'Sleep Data', 'Physical Activity'].map((item, i) => (
+                            <div key={i} className={`bg-surface-container-lowest rounded-xl p-8 border border-surface-variant flex flex-col items-center text-center gap-6 ${i === 2 ? 'md:col-span-2 md:flex-row md:text-left' : ''}`}>
+                                <div className="w-20 h-20 bg-primary-fixed rounded-full flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-[40px] text-on-primary-container" style={{fontVariationSettings: "'FILL' 1"}}>{i === 0 ? 'calendar_today' : i === 1 ? 'bedtime' : 'favorite'}</span>
+                                </div>
+                                <div className="flex-grow">
+                                    <h3 className="font-headline-md text-headline-md text-on-surface">{item}</h3>
+                                    <p className="font-body-md text-on-surface-variant">Explanation for why we need this data to help you.</p>
+                                </div>
+                                <div className="relative inline-block w-12 align-middle select-none">
+                                    <input className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer opacity-0 z-10" type="checkbox" id={`toggle-${i}`} defaultChecked />
+                                    <label className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer" htmlFor={`toggle-${i}`}></label>
+                                </div>
+                            </div>
+                        ))}
+                    </section>
+                    <section className="flex flex-col items-center gap-4 mt-8 pb-32">
+                        <button onClick={() => navigate('/empty')} className="squishy-btn bg-primary-container text-on-primary-container font-headline-md text-body-lg px-8 py-4 rounded-full min-h-[56px] min-w-[200px] shadow-sm">
+                            Continue
+                        </button>
+                    </section>
+                </main>
+            );
+        };
+
+        const EmptyStateScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background text-on-surface min-h-screen flex flex-col font-body-md antialiased pb-24 md:pb-0">
+                    <Header />
+                    <main className="flex-grow w-full max-w-[1040px] mx-auto px-container-margin pt-24 py-lg md:py-xl flex flex-col gap-xl">
+                        <header className="text-center max-w-2xl mx-auto mb-md">
+                            <h2 className="text-3xl md:text-4xl font-bold text-on-surface mb-sm">Let's get comfortable.</h2>
+                            <p className="font-body-lg text-on-surface-variant">Here are a few gentle steps to set up your personal sanctuary.</p>
+                        </header>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
+                            <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-lg flex flex-col items-center text-center shadow-sm">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZb9T4ubEk27zJ61JIAvVNUhAQtK0-HU9SKn8OSRII6HR4r7SRXByAbm5cn8cuZC40IBiVH7LdW6WpHBaEy8ZHyj3Op6Abb9YlSSW7OpMDN85FFR9elRGK_NqwTORXx4ZhyUkg4dkiExFJqH9uVwMPUAlDG4lseZrTdHI2AGK5xLj26wB_7Gk2aYz4csDCTRZheSuyTLLNKJ6R5LS6tkZ3fdZW7CbHkh42Xkv0hTZdigf6pt4eIneP7yindJKoers6YstUq_j6qkA" className="w-32 h-32 mb-4 rounded-full object-cover" />
+                                <h3 className="font-bold mb-2">No calendar connected</h3>
+                                <button onClick={() => navigate('/calendar')} className="mt-auto squishy-btn bg-primary-container px-6 py-3 rounded-full text-sm font-bold">Connect Calendar</button>
+                            </div>
+                            <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-lg flex flex-col items-center text-center shadow-sm">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmKoxIAB6_DWRetpEXKs3aCH1qgnNoZPwZZY7fw-w22QOygSu9x8mQHLSkG7I78EH98zVUnaBF_jcxlK_pqQ01_X_QszWtMWeCEZza7Lq7eHYrmn03PciPburms9s7zkiNof4iDefciRSmnVqrh4y-F4DIqArvbFP2l_y79bUfOAz1emDhG4Yash3Eq0ag6YOBdnSsN-wFtawhGTZkK2cb039x4ZKKmT-0cNy5P9SdYiPs2XfWyNpKbW0nzdFaOlRHY7DuFSj7c-8" className="w-32 h-32 mb-4 rounded-full object-cover" />
+                                <h3 className="font-bold mb-2">No trend data yet</h3>
+                                <button onClick={() => navigate('/trends')} className="mt-auto squishy-btn border px-6 py-3 rounded-full text-sm font-bold">Learn About Trends</button>
+                            </div>
+                            <div className="bg-surface-container-lowest border border-surface-variant rounded-xl p-lg flex flex-col items-center text-center shadow-sm">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfCnexdzkZC1paGK_aQHpXgekuQRED6bn19kYIy1Upkjm-JwaH5-w1dnnVAH_ECVRD24H3v7LTC2zUwRjikGG-GJcAc260cEbgMzyXFhXDuhinjed5tCY8ppJzKvehsJl9z1KEd31ucYSQIl2QMOiV2s_wLKGX0pOft_Q9v5V4jazT6S5BisYOqGFReg1Uaf19DIwZiONtIqBjnZpNANbg-abxAPrxq5JyDsqS5rt6qx3duC6XE_IOQ5XVo4C5SEtOFw89ocdzXUc" className="w-32 h-32 mb-4 rounded-full object-cover" />
+                                <h3 className="font-bold mb-2">No check-ins completed</h3>
+                                <button onClick={() => navigate('/checkin')} className="mt-auto squishy-btn bg-primary-container px-6 py-3 rounded-full text-sm font-bold">Start Check-in</button>
+                            </div>
+                        </div>
+                    </main>
+                    <BottomNav active="home" />
+                    <DesktopSidebar active="home" />
+                </div>
+            );
+        };
+
+        const CalendarScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background text-on-background min-h-screen font-body-md pb-24 md:pb-0 overflow-x-hidden">
+                    <Header />
+                    <main className="max-w-7xl mx-auto px-container-margin pt-24 py-md flex flex-col gap-lg md:pl-28">
+                        <h2 className="text-3xl font-bold">Tuesday, Oct 24</h2>
+                        <section className="bg-surface-container-lowest rounded-xl p-6 shadow-sm border flex flex-col gap-sm">
+                            <div className="flex justify-between font-bold text-xs uppercase tracking-wider">
+                                <span>Daily Load Balance</span>
+                                <span className="text-primary">Moderate</span>
+                            </div>
+                            <div className="h-3 w-full bg-surface-container-high rounded-full overflow-hidden flex">
+                                <div className="bg-tertiary-container w-[20%]"></div>
+                                <div className="bg-primary-container w-[50%]"></div>
+                                <div className="bg-secondary-container w-[15%]"></div>
+                            </div>
+                        </section>
+                        <section className="flex flex-col gap-6 relative">
+                            {[
+                                { time: '09:00', title: 'Strategy Sync', meta: 'Zoom • 60 min', icon: 'groups', bg: 'bg-secondary-fixed' },
+                                { time: '10:30', title: 'Focus Block: Spec', meta: 'DND • 90 min', icon: 'desktop_mac', bg: 'bg-primary-fixed' },
+                                { time: '12:00', title: 'Time to decompress', meta: '15-min guided stretch', icon: 'self_improvement', bg: 'bg-tertiary-container', wellness: true },
+                                { time: '14:00', title: '1:1 with Alex', meta: 'Office • 30 min', icon: 'forum', bg: 'bg-secondary-fixed' }
+                            ].map((ev, idx) => (
+                                <div key={idx} className="flex gap-4 items-start group cursor-pointer">
+                                    <div className="w-16 shrink-0 text-right text-on-surface-variant">{ev.time}</div>
+                                    <div className={`flex-1 rounded-xl p-4 ${ev.bg} shadow-sm group-hover:-translate-y-1 transition-transform`}>
+                                        <div className="flex justify-between items-start">
+                                            <h3 className="font-bold">{ev.title}</h3>
+                                            <span className="material-symbols-outlined">{ev.icon}</span>
+                                        </div>
+                                        <p className="text-sm opacity-80">{ev.meta}</p>
+                                        {ev.wellness && <button className="mt-3 px-4 py-1 bg-white rounded-full text-xs font-bold uppercase">Start</button>}
+                                    </div>
+                                </div>
+                            ))}
+                        </section>
+                    </main>
+                    <BottomNav active="journey" />
+                    <DesktopSidebar active="journey" />
+                </div>
+            );
+        };
+
+        const CheckInScreen = () => {
+            const navigate = useNavigate();
+            const [selectedMood, setSelectedMood] = useState(2);
+            return (
+                <div className="min-h-screen flex flex-col items-center pb-24 bg-background">
+                    <header className="w-full max-w-4xl px-container-margin py-sm flex justify-between items-center bg-background/80 backdrop-blur-sm z-40">
+                        <div className="font-headline-md text-headline-md text-primary tracking-tight">Unburn</div>
+                        <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-full flex items-center justify-center hover:bg-surface-variant"><span className="material-symbols-outlined">close</span></button>
+                    </header>
+                    <main className="flex-1 w-full max-w-2xl px-container-margin mt-lg flex flex-col gap-lg">
+                        <div className="text-center space-y-2">
+                            <p className="font-label-caps text-secondary uppercase tracking-widest text-xs">Daily Check-in</p>
+                            <h1 className="text-3xl font-bold">How are you feeling today?</h1>
+                        </div>
+                        <div className="bg-surface-container-lowest border rounded-xl p-6 flex justify-between overflow-x-auto no-scrollbar gap-2">
+                            {['😫', '😕', '😐', '🙂', '🤩'].map((mood, i) => (
+                                <button key={i} onClick={() => setSelectedMood(i)} className={`w-16 h-16 rounded-full border-2 flex items-center justify-center text-3xl transition-all ${selectedMood === i ? 'bg-primary-container border-primary scale-110 shadow-lg' : 'border-surface-variant bg-surface-container'}`}>
+                                    {mood}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="space-y-4">
+                            {['Energy Level', 'Stress Level'].map((label, i) => (
+                                <div key={i} className="bg-surface-container-lowest border rounded-xl p-6">
+                                    <h3 className="font-bold">{label}</h3>
+                                    <input className={`mt-4 ${i === 0 ? 'energy-track' : 'stress-track'}`} type="range" />
+                                </div>
+                            ))}
+                        </div>
+                        <button onClick={() => navigate('/home')} className="w-full bg-primary-container py-4 rounded-full font-bold shadow-md">Save Check-in</button>
+                    </main>
+                </div>
+            );
+        };
+
+        const InsightsScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background text-on-background min-h-screen flex flex-col pb-24 md:pb-0">
+                    <Header />
+                    <main className="flex-grow w-full max-w-[1040px] mx-auto px-container-margin pt-24 py-md flex flex-col gap-xl md:pl-28">
+                        <div className="space-y-2">
+                            <h1 className="text-3xl md:text-4xl font-bold">Insights & Patterns</h1>
+                            <p className="text-on-surface-variant">I've noticed a few gentle rhythms in your week.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-surface-container-lowest border rounded-xl p-6 flex flex-col gap-4 shadow-sm hover-lift">
+                                <div className="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>bedtime</span></div>
+                                <h3 className="font-bold">Late nights lately</h3>
+                                <p className="text-sm text-on-surface-variant">Activity continued past usual wind-down times. Try a gentle reminder tonight.</p>
+                                <button className="mt-auto bg-primary-container px-4 py-2 rounded-full text-xs font-bold uppercase w-max">Set alarm</button>
+                            </div>
+                            <div className="bg-surface-container-lowest border rounded-xl p-6 flex flex-col gap-4 shadow-sm hover-lift">
+                                <div className="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>battery_charging_full</span></div>
+                                <h3 className="font-bold">Recharging rhythm</h3>
+                                <p className="text-sm text-on-surface-variant">Energy improves on days with fewer than 3 meetings. You thrive on deep-focus time.</p>
+                                <button className="mt-auto border px-4 py-2 rounded-full text-xs font-bold uppercase w-max">Review schedule</button>
+                            </div>
+                            <div className="md:col-span-2 bg-surface-container-lowest border rounded-xl p-6 flex items-center gap-4 shadow-sm">
+                                <div className="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center shrink-0"><span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>directions_walk</span></div>
+                                <div>
+                                    <h3 className="font-bold">Steadily moving</h3>
+                                    <p className="text-sm text-on-surface-variant">Consistent lunch walks are contributing to your stable mood scores.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                    <BottomNav active="explore" />
+                    <DesktopSidebar active="explore" />
+                </div>
+            );
+        };
+
+        const TrendsScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="bg-background text-on-background min-h-screen font-body-md pb-24 md:pb-8">
+                    <Header />
+                    <main className="max-w-[1040px] mx-auto px-container-margin pt-24 space-y-xl md:pl-28">
+                        <h2 className="text-3xl md:text-4xl font-bold">Your Rhythm</h2>
+                        <article className="bg-surface-container-lowest rounded-xl p-6 border shadow-sm space-y-6">
+                            <div className="flex justify-between items-end">
+                                <div><h3 className="text-xl font-bold flex items-center gap-2"><span className="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center"><span className="material-symbols-outlined text-sm">local_fire_department</span></span> Energy Flow</h3></div>
+                                <span className="text-xs uppercase bg-surface-container px-3 py-1 rounded-full">Last 7 Days</span>
+                            </div>
+                            <div className="h-48 w-full bg-surface-container-low rounded-lg relative overflow-hidden">
+                                <svg className="w-full h-full absolute inset-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                                    <path d="M0,80 Q20,60 40,70 T80,40 T100,20 L100,100 L0,100 Z" fill="#fea35e" opacity="0.3"></path>
+                                    <path d="M0,80 Q20,60 40,70 T80,40 T100,20" fill="none" stroke="#924c0b" strokeWidth="3"></path>
+                                </svg>
+                            </div>
+                            <div className="bg-surface-container-low rounded-lg p-4 flex gap-3">
+                                <span className="material-symbols-outlined text-secondary">spa</span>
+                                <p className="text-sm">Your stress peaks are softer this week, and you're adding more recovery moments.</p>
+                            </div>
+                        </article>
+                    </main>
+                    <BottomNav active="journey" />
+                    <DesktopSidebar active="journey" />
+                </div>
+            );
+        };
+
+        const ProfileScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="min-h-screen pb-32 bg-background">
+                    <Header />
+                    <main className="pt-24 px-container-margin md:px-0 max-w-[1040px] mx-auto w-full md:pl-28">
+                        <section className="flex flex-col items-center mb-xl text-center">
+                            <img className="w-24 h-24 rounded-full border-4 shadow-md mb-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZUhJG_X7CRWV3srhigYJsqaxLCzERtqlo9sFA4BJACu0r_I86h4Y8QwFUIwM5TMhKHJwMTyru_pD-1fYBxQZXg0-7p9OOTzanSQuUv9EbXp7mt-uVjjo_eP1-P0niBDYrYaeav3cjWj7ujQ6LZ-Hf67Xrl-E5UehFmhiD3dZPay__ty1-sffPYblr86XxWC2hVNZQ5zw89ryQAWjBGSLmV3ttc1OQdMf5bdJLuLCzIJMoN0GkqiXwCx2m3DEEhSs0HGcRfHnkgtE" />
+                            <h2 className="text-2xl font-bold">Profile</h2>
+                            <p className="text-sm text-on-surface-variant">Manage how Unburn works for you.</p>
+                        </section>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-surface-container-lowest border rounded-xl p-6">
+                                <h3 className="font-bold mb-4">Connections</h3>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center border-b pb-4">
+                                        <div className="flex items-center gap-3">
+                                            <span className="material-symbols-outlined">favorite</span>
+                                            <div><p className="font-bold">Apple Health</p><p className="text-xs text-secondary">Connected</p></div>
+                                        </div>
+                                        <button className="text-xs uppercase border rounded-full px-4 py-1">Manage</button>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-3">
+                                            <span className="material-symbols-outlined">calendar_today</span>
+                                            <div><p className="font-bold">Google Calendar</p><p className="text-xs text-outline">Disconnected</p></div>
+                                        </div>
+                                        <button className="text-xs uppercase bg-primary-container rounded-full px-4 py-1">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-surface-container-lowest border rounded-xl p-6">
+                                <h3 className="font-bold mb-4">Boundaries</h3>
+                                <div className="space-y-4">
+                                    {['Gentle Nudges', 'Quiet Hours (8PM-8AM)'].map((label, i) => (
+                                        <div key={i} className="flex justify-between items-center">
+                                            <span className="text-sm font-bold">{label}</span>
+                                            <div className="relative inline-block w-12 align-middle">
+                                                <input className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer opacity-0 z-10" type="checkbox" id={`p-toggle-${i}`} defaultChecked />
+                                                <label className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer" htmlFor={`p-toggle-${i}`}></label>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                    <BottomNav active="profile" />
+                    <DesktopSidebar active="profile" />
+                </div>
+            );
+        };
+
+        const CalendarGridScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="min-h-screen font-body-md overflow-x-hidden pb-32 bg-background">
+                    <header className="px-container-margin py-md flex items-center justify-between sticky top-0 bg-background/90 backdrop-blur z-40">
+                        <button onClick={() => navigate(-1)} className="squish-click w-12 h-12 flex items-center justify-center rounded-full bg-surface-container"><span className="material-symbols-outlined">arrow_back</span></button>
+                        <h1 className="font-bold">June</h1>
+                        <button onClick={() => navigate('/profile')} className="w-12 h-12 rounded-full overflow-hidden border-2"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZUhJG_X7CRWV3srhigYJsqaxLCzERtqlo9sFA4BJACu0r_I86h4Y8QwFUIwM5TMhKHJwMTyru_pD-1fYBxQZXg0-7p9OOTzanSQuUv9EbXp7mt-uVjjo_eP1-P0niBDYrYaeav3cjWj7ujQ6LZ-Hf67Xrl-E5UehFmhiD3dZPay__ty1-sffPYblr86XxWC2hVNZQ5zw89ryQAWjBGSLmV3ttc1OQdMf5bdJLuLCzIJMoN0GkqiXwCx2m3DEEhSs0HGcRfHnkgtE" className="w-full h-full object-cover" /></button>
+                    </header>
+                    <main className="max-w-[1040px] mx-auto px-container-margin mt-sm flex flex-col xl:flex-row gap-lg">
+                        <section className="flex-1">
+                            <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold uppercase opacity-70 mb-4">
+                                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <div key={d}>{d}</div>)}
+                            </div>
+                            <div className="grid grid-cols-7 gap-2 auto-rows-[60px] md:auto-rows-[80px]">
+                                {[...Array(4)].map((_, i) => <div key={`empty-${i}`} className="opacity-30"></div>)}
+                                {[...Array(26)].map((_, i) => {
+                                    const day = i + 1;
+                                    const workloads = ['bg-workload-low', 'bg-workload-mod', 'bg-surface-container-low', 'bg-workload-busy', 'bg-workload-high'];
+                                    const workload = workloads[Math.floor(Math.random() * workloads.length)];
+                                    const isSelected = day === 12;
+                                    return (
+                                        <button key={day} className={`squish-click flex flex-col items-center justify-center rounded-xl text-lg font-bold shadow-sm transition-all ${isSelected ? 'bg-tertiary-fixed ring-4 ring-tertiary-fixed-dim transform scale-105 z-10' : workload}`}>
+                                            {day}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </section>
+                        <section className="w-full xl:w-[400px] space-y-6">
+                            <div className="bg-surface-container-lowest border rounded-3xl p-6 shadow-sm relative overflow-hidden">
+                                <h2 className="text-xl font-bold">Wed, June 12</h2>
+                                <div className="mt-2 bg-workload-mod px-4 py-1.5 rounded-full inline-block text-xs font-bold">Burnout Risk: Moderate</div>
+                                <div className="mt-6 bg-surface-container-low p-4 rounded-xl text-sm border flex gap-3">
+                                    <span className="material-symbols-outlined text-primary">psychiatry</span>
+                                    <p>You have 6 hours of meetings. Consider moving a low-priority task to give yourself breathing room.</p>
+                                </div>
+                                <div className="mt-6 space-y-3">
+                                    <div className="p-3 bg-tertiary-fixed rounded-xl border border-tertiary-fixed-dim/50 shadow-sm flex items-center justify-between">
+                                        <div><p className="font-bold text-sm">Mindful Walk</p><p className="text-xs opacity-70">12:30 PM - 1:00 PM</p></div>
+                                        <span className="material-symbols-outlined">nature_people</span>
+                                    </div>
+                                    <button className="w-full text-left bg-surface-container border rounded-2xl p-4 flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-secondary-fixed rounded-full flex items-center justify-center"><span className="material-symbols-outlined">self_improvement</span></div>
+                                        <div className="flex-1"><p className="font-bold text-sm">Add 15m recovery break</p></div>
+                                        <span className="material-symbols-outlined">add_circle</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <MemoryRouter initialEntries={['/']}>
+                    <Routes>
+                        <Route path="/" element={<OnboardingScreen />} />
+                        <Route path="/signup" element={<SignUpScreen />} />
+                        <Route path="/permissions" element={<PermissionsScreen />} />
+                        <Route path="/empty" element={<EmptyStateScreen />} />
+                        <Route path="/home" element={<EmptyStateScreen />} />
+                        <Route path="/calendar" element={<CalendarGridScreen />} />
+                        <Route path="/trends" element={<TrendsScreen />} />
+                        <Route path="/insights" element={<InsightsScreen />} />
+                        <Route path="/checkin" element={<CheckInScreen />} />
+                        <Route path="/profile" element={<ProfileScreen />} />
+                    </Routes>
+                </MemoryRouter>
+            );
+        };
+
+        const container = document.getElementById('root');
+        const root = createRoot(container);
+        root.render(<App />);
+    </script>
+</body>
+</html>
