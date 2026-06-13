@@ -1,8 +1,30 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppLayout from '../components/AppLayout';
 import Toggle from '../components/Toggle';
 import { USER_AVATAR } from '../constants/images';
+import useAuth from '../hooks/useAuth';
 
 export default function Profile() {
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleLogout = async () => {
+    setError('');
+    setLoading(true);
+
+    try {
+      await signOut();
+      navigate('/');
+    } catch (err) {
+      setError(err.message ?? 'Unable to log out. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AppLayout
       active="profile"
@@ -12,6 +34,7 @@ export default function Profile() {
       <section className="flex flex-col items-center mb-xl text-center">
         <img className="w-24 h-24 rounded-full border-4 shadow-md mb-4" src={USER_AVATAR} alt="Profile" />
         <h2 className="text-2xl font-bold">Profile</h2>
+        {user?.email && <p className="text-sm text-on-surface-variant mt-1">{user.email}</p>}
         <p className="text-sm text-on-surface-variant">Manage how Unburn works for you.</p>
       </section>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -52,6 +75,20 @@ export default function Profile() {
           </div>
         </div>
       </div>
+      <section className="mt-xl flex flex-col items-center gap-sm">
+        {error && (
+          <p className="text-sm text-error bg-error-container px-4 py-3 rounded-xl w-full max-w-md text-center" role="alert">
+            {error}
+          </p>
+        )}
+        <button
+          onClick={handleLogout}
+          disabled={loading}
+          className="squishy-btn min-h-[56px] min-w-[200px] px-8 py-4 rounded-full border-2 border-surface-variant text-on-surface font-headline-md disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Logging out...' : 'Log Out'}
+        </button>
+      </section>
     </AppLayout>
   );
 }

@@ -33,6 +33,12 @@ export default function Onboarding() {
             Get Started
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
           </button>
+          <button
+            onClick={() => navigate('/signup', { state: { mode: 'login' } })}
+            className="mt-sm text-on-surface-variant font-body-md hover:text-primary transition-colors"
+          >
+            Already have an account? <span className="font-bold text-primary">Log in</span>
+          </button>
         </div>
       </main>
     </div>
