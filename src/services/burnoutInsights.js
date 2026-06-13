@@ -1,7 +1,6 @@
 const WORKDAY_START_HOUR = 8;
 const WORKDAY_END_HOUR = 18;
 const FOCUS_BLOCK_THRESHOLD_HOURS = 2;
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
