@@ -4,11 +4,18 @@ import AppLayout from '../components/AppLayout';
 import Toggle from '../components/Toggle';
 import { USER_AVATAR } from '../constants/images';
 import useAuth from '../hooks/useAuth';
+import {
+  connectGoogleCalendar,
+  disconnectGoogleCalendar,
+  getGoogleCalendarConnection,
+} from '../services/googleCalendar';
 
 export default function Profile() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [calendarLoading, setCalendarLoading] = useState(false);
+  const [calendarStatus, setCalendarStatus] = useState(() => getGoogleCalendarConnection(user?.id));
   const [error, setError] = useState('');
 
   const handleLogout = async () => {
@@ -24,6 +31,37 @@ export default function Profile() {
       setLoading(false);
     }
   };
+
+  const handleConnectCalendar = async () => {
+    setError('');
+    setCalendarLoading(true);
+
+    try {
+      await connectGoogleCalendar(user?.id);
+      setCalendarStatus(getGoogleCalendarConnection(user?.id));
+    } catch (err) {
+      setError(err.message ?? 'Unable to connect Google Calendar. Please try again.');
+    } finally {
+      setCalendarLoading(false);
+    }
+  };
+
+  const handleDisconnectCalendar = () => {
+    setError('');
+    disconnectGoogleCalendar(user?.id);
+    setCalendarStatus(getGoogleCalendarConnection(user?.id));
+  };
+
+  const calendarStatusLabel = calendarStatus.connected
+    ? 'Connected'
+    : calendarStatus.expired
+      ? 'Expired'
+      : 'Disconnected';
+  const calendarStatusClassName = calendarStatus.connected
+    ? 'text-secondary'
+    : calendarStatus.expired
+      ? 'text-error'
+      : 'text-outline';
 
   return (
     <AppLayout
@@ -56,10 +94,30 @@ export default function Profile() {
                 <span className="material-symbols-outlined">calendar_today</span>
                 <div>
                   <p className="font-bold">Google Calendar</p>
-                  <p className="text-xs text-outline">Disconnected</p>
+                  <p className={`text-xs ${calendarStatusClassName}`}>{calendarStatusLabel}</p>
                 </div>
               </div>
-              <button className="text-xs uppercase bg-primary-container rounded-full px-4 py-1">Connect</button>
+              <div className="flex items-center gap-2">
+                {calendarStatus.connected && (
+                  <button
+                    onClick={handleDisconnectCalendar}
+                    className="text-xs uppercase border rounded-full px-4 py-1"
+                  >
+                    Disconnect
+                  </button>
+                )}
+                <button
+                  onClick={handleConnectCalendar}
+                  disabled={calendarLoading}
+                  className="text-xs uppercase bg-primary-container rounded-full px-4 py-1 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {calendarLoading
+                    ? 'Connecting...'
+                    : calendarStatus.connected
+                      ? 'Reconnect'
+                      : 'Connect Calendar'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
