@@ -135,15 +135,25 @@ export function disconnectGoogleCalendar(userId) {
   window.localStorage.removeItem(getStorageKey(userId));
 }
 
-function normalizeCalendarEvent(event) {
+export function normalizeCalendarEvent(event) {
   return {
+    attendeeCount: event.attendees?.length ?? 0,
+    creatorSelf: Boolean(event.creator?.self),
     id: event.id,
     end: event.end?.dateTime ?? event.end?.date,
+    eventType: event.eventType,
+    focusTimeProperties: event.focusTimeProperties ?? null,
     htmlLink: event.htmlLink,
     isAllDay: Boolean(event.start?.date),
     location: event.location,
+    organizerSelf: Boolean(event.organizer?.self),
+    outOfOfficeProperties: event.outOfOfficeProperties ?? null,
+    recurrence: event.recurrence ?? [],
+    recurringEventId: event.recurringEventId,
     start: event.start?.dateTime ?? event.start?.date,
     summary: event.summary || 'Untitled event',
+    transparency: event.transparency,
+    workingLocationProperties: event.workingLocationProperties ?? null,
   };
 }
 

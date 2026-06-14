@@ -1,6 +1,7 @@
 const WORKDAY_START_HOUR = 8;
 const WORKDAY_END_HOUR = 18;
 const FOCUS_BLOCK_THRESHOLD_HOURS = 2;
+const LONG_AVAILABILITY_BLOCK_HOURS = 12;
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -14,6 +15,35 @@ function getValidDate(value) {
 
 function getLocalDateKey(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function getDurationHours(start, end) {
+  return (end.getTime() - start.getTime()) / (60 * 60 * 1000);
+}
+
+function isRecurringEvent(event) {
+  return Boolean(event.recurringEventId || event.recurrence?.length);
+}
+
+function isGoogleNonMeetingBlock(event) {
+  return (
+    event.eventType === 'workingLocation' ||
+    event.eventType === 'outOfOffice' ||
+    event.eventType === 'focusTime' ||
+    Boolean(event.workingLocationProperties || event.outOfOfficeProperties || event.focusTimeProperties)
+  );
+}
+
+function isLikelyAvailabilityBlock(event, durationHours) {
+  const attendeeCount = event.attendeeCount ?? 0;
+
+  return (
+    durationHours > LONG_AVAILABILITY_BLOCK_HOURS &&
+    attendeeCount === 0 &&
+    event.creatorSelf === true &&
+    event.organizerSelf === true &&
+    isRecurringEvent(event)
+  );
 }
 
 function getDayBounds(date) {
@@ -44,6 +74,12 @@ function normalizeEvent(event) {
   const end = getValidDate(event.end);
 
   if (!start || !end || end <= start || event.isAllDay) {
+    return null;
+  }
+
+  const durationHours = getDurationHours(start, end);
+
+  if (isGoogleNonMeetingBlock(event) || isLikelyAvailabilityBlock(event, durationHours)) {
     return null;
   }
 

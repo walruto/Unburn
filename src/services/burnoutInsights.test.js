@@ -60,6 +60,85 @@ describe('analyzeBurnoutRisk', () => {
     expect(analysis.metrics.averageMeetingsPerDay).toBeCloseTo(2 / 14);
   });
 
+  it('ignores recurring self-authored availability blocks without attendees', () => {
+    const analysis = analyzeBurnoutRisk(
+      Array.from({ length: 7 }, (_, index) =>
+        event(`work-${index}`, localDateTime(7 + index, 11), localDateTime(8 + index, 11, 30), {
+          attendeeCount: 0,
+          creatorSelf: true,
+          eventType: 'default',
+          organizerSelf: true,
+          recurrence: ['RRULE:FREQ=DAILY'],
+          summary: 'Work',
+        }),
+      ),
+      REFERENCE_DATE,
+    );
+
+    expect(analysis.metrics.totalMeetings).toBe(0);
+    expect(analysis.metrics.totalMeetingHours).toBe(0);
+    expect(analysis.metrics.longestConsecutiveMeetingBlock).toBe(0);
+    expect(analysis.burnoutScore).toBe(0);
+  });
+
+  it('ignores Google semantic non-meeting blocks', () => {
+    const analysis = analyzeBurnoutRisk(
+      [
+        event('working-location', localDateTime(10, 9), localDateTime(10, 17), {
+          eventType: 'workingLocation',
+        }),
+        event('focus-time', localDateTime(11, 9), localDateTime(11, 11), {
+          eventType: 'focusTime',
+        }),
+        event('out-of-office', localDateTime(12, 9), localDateTime(12, 17), {
+          eventType: 'outOfOffice',
+        }),
+      ],
+      REFERENCE_DATE,
+    );
+
+    expect(analysis.metrics.totalMeetings).toBe(0);
+    expect(analysis.metrics.totalMeetingHours).toBe(0);
+    expect(analysis.metrics.longestConsecutiveMeetingBlock).toBe(0);
+  });
+
+  it('keeps legitimate overnight meetings that cross midnight', () => {
+    const analysis = analyzeBurnoutRisk(
+      [
+        event('overnight-incident-review', localDateTime(10, 20), localDateTime(11, 9), {
+          attendeeCount: 4,
+          creatorSelf: true,
+          eventType: 'default',
+          organizerSelf: true,
+        }),
+      ],
+      REFERENCE_DATE,
+    );
+
+    expect(analysis.metrics.totalMeetings).toBe(1);
+    expect(analysis.metrics.totalMeetingHours).toBe(13);
+    expect(analysis.metrics.longestConsecutiveMeetingBlock).toBe(13);
+  });
+
+  it('keeps long recurring meetings with attendees', () => {
+    const analysis = analyzeBurnoutRisk(
+      [
+        event('recurring-overnight-review', localDateTime(10, 20), localDateTime(11, 9), {
+          attendeeCount: 3,
+          creatorSelf: true,
+          eventType: 'default',
+          organizerSelf: true,
+          recurrence: ['RRULE:FREQ=WEEKLY'],
+        }),
+      ],
+      REFERENCE_DATE,
+    );
+
+    expect(analysis.metrics.totalMeetings).toBe(1);
+    expect(analysis.metrics.totalMeetingHours).toBe(13);
+    expect(analysis.metrics.longestConsecutiveMeetingBlock).toBe(13);
+  });
+
   it('detects early, late, and weekend meetings', () => {
     const analysis = analyzeBurnoutRisk(
       [
